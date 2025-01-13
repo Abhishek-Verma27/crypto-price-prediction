@@ -1,66 +1,37 @@
 from flask import Flask, request, jsonify
-import pickle
-import numpy as np
-import os
-import re
+import pandas as pd
+import joblib
 
 app = Flask(__name__)
 
 # Load the trained model
-model_path = "models/price_prediction_model.pkl"
-if not os.path.exists(model_path):
-    raise FileNotFoundError(f"Model file not found at {model_path}. Please ensure the model is trained first.")
+model_path = "crypto_price_predictor.pkl"
+with open(model_path, "rb") as f:
+    model = joblib.load(model_path)
 
-with open(model_path, "rb") as model_file:
-    model = pickle.load(model_file)
-
-# Helper function to preprocess input data
-def preprocess_input(data):
-    # Extract the necessary features
-    try:
-        # Validate and clean each input field
-        market_cap = float(data.get("market_cap", 0))
-        volume_24h = float(data.get("volume_24h", 0))
-        historical_trends = float(data.get("historical_trends", 0))  # Example: past prices or moving averages
-        sentiment_score = float(data.get("sentiment_score", 0))  # Example: sentiment score
-        macroeconomic_indicator = float(data.get("macroeconomic_indicator", 0))  # Example: inflation rate
-        
-        # Return as a numpy array for prediction
-        return np.array([[market_cap, volume_24h, historical_trends, sentiment_score, macroeconomic_indicator]])
-    except ValueError:
-        raise ValueError("All input values must be numeric.")
-
-# Define the prediction route
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        # Get input data from the request
+        # Parse JSON input
         input_data = request.get_json()
+        df = pd.DataFrame(input_data)
 
-        # Ensure the required fields are present
-        if not input_data or len(input_data) == 0:
-            return jsonify({"error": "No input data provided"}), 400
-        
-        # Validate the input fields
-        required_fields = ["market_cap", "volume_24h", "historical_trends", "sentiment_score", "macroeconomic_indicator"]
-        for field in required_fields:
-            if field not in input_data[0]:
-                return jsonify({"error": f"Missing required field: {field}"}), 400
+        # Validate input features
+        required_features = ["market_cap", "volume_24h", "historical_trends", "sentiment_score", "macroeconomic_indicator"]
+        if not all(feature in df.columns for feature in required_features):
+            return jsonify({"error": f"Missing required features: {required_features}"}), 400
 
-        # Process the input data
-        processed_data = preprocess_input(input_data[0])
+        # Ensure all required features are numeric
+        for feature in required_features:
+            if not pd.api.types.is_numeric_dtype(df[feature]):
+                return jsonify({"error": f"Feature '{feature}' must be numeric"}), 400
 
-        # Make the prediction
-        prediction = model.predict(processed_data)
+        # Make predictions
+        predictions = model.predict(df[required_features])
+        return jsonify({"predictions": predictions.tolist()})
 
-        # Return the prediction as a JSON response
-        return jsonify({"predictions": prediction.tolist()})
-    
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
     except Exception as e:
-        return jsonify({"error": "An error occurred while processing the request"}), 500
-
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
