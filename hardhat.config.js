@@ -1,4 +1,4 @@
-require("@nomiclabs/hardhat-ethers");
+require("@nomicfoundation/hardhat-ethers");
 require("dotenv").config();
 const { SKALE_PRIVATE_KEY, SKALE_ENDPOINT } = process.env;
 
