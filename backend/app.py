@@ -1,54 +1,64 @@
-from flask import Flask, request, jsonify
+from web3 import Web3
 import pandas as pd
 import joblib
-from web3 import Web3
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# Set the SKALE RPC URL
+# Set up Web3 connection to SKALE Testnet
 skale_url = "https://testnet.skalenodes.com/v1/giant-half-dual-testnet"
 web3 = Web3(Web3.HTTPProvider(skale_url))
 
-contract_address = web3.to_checksum_address("0x304697ff06FDEF7F2DABb500ee23A5281C3D2c18")
+# Replace with your deployed contract address
+contract_address = web3.to_checksum_address("0x87DdCCa2876C429bDaeF93497CeBD2898Ca9Da20")
+
+# ABI for contract interaction
 contract_abi = [
     {
-      "inputs": [
-        {"internalType": "string", "name": "cryptoSymbol", "type": "string"},
-        {"internalType": "uint256", "name": "predictionDate", "type": "uint256"},
-        {"internalType": "uint256", "name": "predictedValue", "type": "uint256"}
-      ],
-      "name": "storePrediction",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
+        "inputs": [
+            {"internalType": "string", "name": "cryptoSymbol", "type": "string"},
+            {"internalType": "uint256", "name": "predictionDate", "type": "uint256"},
+            {"internalType": "uint256", "name": "predictedValue", "type": "uint256"}
+        ],
+        "name": "storePrediction",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
-      "inputs": [
-        {"internalType": "uint256", "name": "index", "type": "uint256"}
-      ],
-      "name": "getPrediction",
-      "outputs": [
-        {"internalType": "string", "name": "", "type": "string"},
-        {"internalType": "uint256", "name": "", "type": "uint256"},
-        {"internalType": "uint256", "name": "", "type": "uint256"}
-      ],
-      "stateMutability": "view",
-      "type": "function"
+        "inputs": [
+            {"internalType": "uint256", "name": "index", "type": "uint256"}
+        ],
+        "name": "getPrediction",
+        "outputs": [
+            {"internalType": "string", "name": "", "type": "string"},
+            {"internalType": "uint256", "name": "", "type": "uint256"},
+            {"internalType": "uint256", "name": "", "type": "uint256"}
+        ],
+        "stateMutability": "view",
+        "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getPredictionCount",
-      "outputs": [
-        {"internalType": "uint256", "name": "", "type": "uint256"}
-      ],
-      "stateMutability": "view",
-      "type": "function"
+        "inputs": [],
+        "name": "getPredictionCount",
+        "outputs": [
+            {"internalType": "uint256", "name": "", "type": "uint256"}
+        ],
+        "stateMutability": "view",
+        "type": "function"
     }
 ]
 
+# Initialize contract
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
-account = web3.eth.account.from_key("0x9e371668dcc4151e366a3c25f03d02dbfa62cd4dae5d48ff14cb69147ad713a0")
 
+# Private key of the sender account
+private_key = "0x065f0eb0a4b2408bbeac1c66173dac7f92973d3b7508d28f273be32041367a23"
+
+# Derive account from the private key
+account = web3.eth.account.from_key(private_key)
+
+# Load models
 btc_model_path = r"C:\Users\abhis\OneDrive\Desktop\crypto-price-prediction\backend\models\BTC_price_predictor.pkl"
 eth_model_path = r"C:\Users\abhis\OneDrive\Desktop\crypto-price-prediction\backend\models\ETH_price_predictor.pkl"
 
@@ -89,6 +99,10 @@ def make_prediction(model, crypto_type):
         prediction = int(predictions[0])
         print("Prediction:", prediction)
 
+        # Get the current gas price
+        gas_price = web3.eth.gas_price
+        print("Current gas price:", gas_price)
+
         function_abi = contract.functions.storePrediction(
             crypto_type, 
             int(pd.Timestamp.now().timestamp()), 
@@ -98,9 +112,9 @@ def make_prediction(model, crypto_type):
 
         nonce = web3.eth.get_transaction_count(account.address)
         transaction = {
-            'chainId': 1,
-            'gas': 2000000,
-            'gasPrice': web3.eth.gas_price,
+            'chainId': 974399131,  # Skale chain ID
+            'gas': 2000000,  # Gas limit
+            'gasPrice': gas_price,  # Use the gas_price variable here
             'nonce': nonce,
             'from': account.address,
             'to': contract_address,
@@ -108,7 +122,8 @@ def make_prediction(model, crypto_type):
         }
         print("Transaction object created:", transaction)
 
-        signed_tx = web3.eth.account.sign_transaction(transaction, account.key)
+        # Sign the transaction using the private key directly
+        signed_tx = web3.eth.account.sign_transaction(transaction, private_key)
         print("Transaction signed")
 
         tx_hash = web3.eth.send_raw_transaction(signed_tx.raw_transaction)  # Corrected attribute name
