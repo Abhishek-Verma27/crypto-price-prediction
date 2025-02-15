@@ -40,3 +40,8 @@ $body = @'
 
 $response = Invoke-WebRequest -Uri $uri -Headers $headers -Method POST -Body $body
 $response.Content
+
+
+blockchain commands : 
+npx hardhat compile
+npx hardhat run scripts/deploy.js --network skale

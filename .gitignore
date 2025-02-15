@@ -31,3 +31,7 @@ ignition/deployments/chain-31337
 
 package-lock.json
 package.json
+
+info
+
+hardhat.config.js

@@ -5,8 +5,9 @@ from web3 import Web3
 
 app = Flask(__name__)
 
-infura_url = "https://mainnet.infura.io/v3/1c33cc4341504a60a89ec25d270c8351"
-web3 = Web3(Web3.HTTPProvider(infura_url))
+# Set the SKALE RPC URL
+skale_url = "https://testnet.skalenodes.com/v1/giant-half-dual-testnet"
+web3 = Web3(Web3.HTTPProvider(skale_url))
 
 contract_address = web3.to_checksum_address("0x304697ff06FDEF7F2DABb500ee23A5281C3D2c18")
 contract_abi = [

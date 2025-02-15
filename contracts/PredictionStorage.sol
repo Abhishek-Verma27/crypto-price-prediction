@@ -1,22 +1,25 @@
-// contracts/PredictionStorage.sol
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract PredictionStorage {
+contract PredictionContract {
     struct Prediction {
-        uint timestamp;
-        string cryptocurrency;
-        int predictedPrice;
+        string cryptoSymbol;
+        uint256 predictionDate;
+        uint256 predictedValue;
     }
 
     Prediction[] public predictions;
 
-    function storePrediction(string calldata _cryptocurrency, int _predictedPrice) public {
-        predictions.push(Prediction(block.timestamp, _cryptocurrency, _predictedPrice));
+    function storePrediction(string memory cryptoSymbol, uint256 predictionDate, uint256 predictedValue) public {
+        predictions.push(Prediction(cryptoSymbol, predictionDate, predictedValue));
     }
 
-    function getPrediction(uint _index) public view returns (uint, string memory, int) {
-        Prediction memory prediction = predictions[_index];
-        return (prediction.timestamp, prediction.cryptocurrency, prediction.predictedPrice);
+    function getPrediction(uint256 index) public view returns (string memory, uint256, uint256) {
+        Prediction memory pred = predictions[index];
+        return (pred.cryptoSymbol, pred.predictionDate, pred.predictedValue);
+    }
+
+    function getPredictionCount() public view returns (uint256) {
+        return predictions.length;
     }
 }
