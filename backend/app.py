@@ -10,7 +10,7 @@ skale_url = "https://testnet.skalenodes.com/v1/giant-half-dual-testnet"
 web3 = Web3(Web3.HTTPProvider(skale_url))
 
 # Replace with your deployed contract address
-contract_address = web3.to_checksum_address("0x87DdCCa2876C429bDaeF93497CeBD2898Ca9Da20")
+contract_address = web3.to_checksum_address("0xaddress")
 
 # ABI for contract interaction
 contract_abi = [
@@ -53,7 +53,7 @@ contract_abi = [
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
 # Private key of the sender account
-private_key = "0x065f0eb0a4b2408bbeac1c66173dac7f92973d3b7508d28f273be32041367a23"
+private_key = "0x"
 
 # Derive account from the private key
 account = web3.eth.account.from_key(private_key)
