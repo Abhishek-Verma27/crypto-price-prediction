@@ -2,8 +2,10 @@ from web3 import Web3
 import pandas as pd
 import joblib
 from flask import Flask, request, jsonify
+from flask_cors import CORS  
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Set up Web3 connection to SKALE Testnet
 skale_url = "https://testnet.skalenodes.com/v1/giant-half-dual-testnet"
