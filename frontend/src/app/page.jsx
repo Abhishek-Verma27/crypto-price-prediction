@@ -1,143 +1,145 @@
 "use client";
 import React from "react";
-import { useState, useCallback } from "react";
-import PredictionForm from "../components/Prediction-Form";
-import PredictionResult from "../components/Prediction-Result";
-import WalletConnect from "../components/Wallet-Connect";
 
 function MainComponent() {
-  const [isConnected, setIsConnected] = useState(false);
-  const [address, setAddress] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [walletState, setWalletState] = useState({
+    isConnected: false,
+    isConnecting: false,
+    address: null,
+    error: null,
+  });
+
+  const [prices, setPrices] = useState(null);
+  const [priceLoading, setPriceLoading] = useState(true);
+  const [priceError, setPriceError] = useState(null);
+
   const [prediction, setPrediction] = useState(null);
-  const handleConnect = useCallback(async () => {
-    setLoading(true);
-    try {
-      if (typeof window.ethereum !== "undefined") {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setAddress(accounts[0]);
-        setIsConnected(true);
-      } else {
-        throw new Error("Please install MetaMask");
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const [predictionLoading, setPredictionLoading] = useState(false);
+  const [transactionStatus, setTransactionStatus] = useState(null);
+  const [transactionHash, setTransactionHash] = useState(null);
+  const [transactionError, setTransactionError] = useState(null);
+
+  useEffect(() => {
+    const mockPrices = {
+      btc: {
+        current: 45000,
+        changePercentage: 2.5,
+        history: [42000, 43000, 44000, 45000, 45000],
+      },
+      eth: {
+        current: 2800,
+        changePercentage: -1.2,
+        history: [2900, 2850, 2800, 2750, 2800],
+      },
+    };
+    setTimeout(() => {
+      setPrices(mockPrices);
+      setPriceLoading(false);
+    }, 1500);
   }, []);
-  const handleDisconnect = useCallback(() => {
-    setAddress("");
-    setIsConnected(false);
-  }, []);
 
-  const handlePrediction = useCallback(async (values) => {
-    setLoading(true);
-    setError("");
-    try {
-        const apiUrl = values.cryptocurrency === "BTC"
-            ? "http://127.0.0.1:5000/predict/btc"
-            : "http://127.0.0.1:5000/predict/eth";
-
-        const response = await fetch(apiUrl, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify([{
-                lag_1: parseFloat(values.lag_1),
-                lag_2: parseFloat(values.lag_2),
-                lag_3: parseFloat(values.lag_3),
-                lag_4: parseFloat(values.lag_4),
-                lag_5: parseFloat(values.lag_5)
-            }])
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to fetch prediction");
-        }
-
-        const data = await response.json();
-        setPrediction({
-            cryptocurrency: values.cryptocurrency,
-            predictedPrice: data.prediction,
-            transactionHash: data.tx_hash,
-            status: "success",
-            timestamp: new Date().toISOString(),
-        });
-    } catch (err) {
-        setError(err.message);
-    } finally {
-        setLoading(false);
+  const handleWalletConnect = async () => {
+    if (!window.ethereum) {
+      setWalletState((prev) => ({ ...prev, error: "Please install MetaMask" }));
+      return;
     }
-}, []);
+
+    setWalletState((prev) => ({ ...prev, isConnecting: true, error: null }));
+
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setWalletState((prev) => ({
+        ...prev,
+        address: accounts[0],
+        isConnected: true,
+        isConnecting: false,
+      }));
+    } catch (err) {
+      setWalletState((prev) => ({
+        ...prev,
+        error: "Failed to connect wallet",
+        isConnecting: false,
+      }));
+    }
+  };
+
+  const handlePredictionSubmit = async (data) => {
+    setPredictionLoading(true);
+    setTransactionError(null);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setPrediction({
+        coin: data.coin,
+        price: data.prices[data.prices.length - 1],
+      });
+      setTransactionStatus("success");
+      setTransactionHash("0x" + "1".repeat(64));
+    } catch (err) {
+      setTransactionError("Transaction failed");
+      setTransactionStatus("failure");
+    }
+    setPredictionLoading(false);
+  };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa]">
+    <div className="min-h-screen bg-[#f8fafc]">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold text-[#1a1a1a]">
-              Crypto Price Predictor
-            </h1>
+            <div className="flex items-center">
+              <i className="fas fa-chart-line text-[#3b82f6] text-2xl mr-3"></i>
+              <h1 className="font-inter text-2xl font-bold text-[#1e293b]">
+                Crypto Price Predictor
+              </h1>
+            </div>
             <WalletConnect
-              address={address}
-              isConnected={isConnected}
-              onConnect={handleConnect}
-              onDisconnect={handleDisconnect}
-              isLoading={loading}
+              isConnected={walletState.isConnected}
+              isConnecting={walletState.isConnecting}
+              address={walletState.address}
+              error={walletState.error}
+              onConnect={handleWalletConnect}
             />
           </div>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid md:grid-cols-2 gap-8">
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-[#1a1a1a] mb-4">
-              Enter Historical Prices
+        <div className="space-y-8">
+          <PriceDisplay
+            prices={prices}
+            loading={priceLoading}
+            error={priceError}
+          />
+
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            <h2 className="font-inter text-xl font-semibold mb-4">
+              Make Your Prediction
             </h2>
+            <p className="font-inter text-[#64748b] mb-6">
+              Enter the predicted prices for the next 5 days to generate a
+              forecast. Connect your wallet to save your predictions.
+            </p>
             <PredictionForm
-              onSubmit={handlePrediction}
-              loading={loading}
-              error={error}
+              onSubmit={handlePredictionSubmit}
+              loading={predictionLoading}
+              error={transactionError}
             />
           </div>
 
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold text-[#1a1a1a] mb-4">
-              Prediction Results
-            </h2>
-            {prediction ? (
-              <PredictionResult
-                predictedPrice={prediction.predictedPrice}
-                transactionHash={prediction.transactionHash}
-                status={prediction.status}
-                timestamp={prediction.timestamp}
-                cryptocurrency={prediction.cryptocurrency}
+          {(prediction || transactionStatus) && (
+            <div className="transition-all duration-300 ease-in-out">
+              <TransactionStatus
+                prediction={prediction}
+                transactionStatus={transactionStatus}
+                transactionHash={transactionHash}
+                error={transactionError}
               />
-            ) : (
-              <div className="bg-white rounded-lg shadow-md p-6 max-w-md w-full text-center text-gray-500">
-                Submit historical prices to see prediction results
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </main>
-
-      <style jsx global>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .grid > div {
-          animation: fadeIn 0.5s ease-out;
-        }
-      `}</style>
     </div>
   );
 }

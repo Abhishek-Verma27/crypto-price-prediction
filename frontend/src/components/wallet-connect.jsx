@@ -3,81 +3,136 @@ import React from "react";
 
 function WalletConnect({
   address,
+  isConnecting,
   isConnected,
   onConnect,
-  onDisconnect,
-  isLoading,
+  error,
 }) {
   const shortenAddress = (addr) => {
     if (!addr) return "";
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   };
 
-  return (
-    <div className="relative inline-block">
-      <button
-        onClick={isConnected ? undefined : onConnect}
-        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
-      >
-        <div
-          className={`w-2 h-2 rounded-full ${
-            isLoading
-              ? "bg-yellow-400"
-              : isConnected
-              ? "bg-green-400"
-              : "bg-gray-400"
-          }`}
-        />
+  const [isHovered, setIsHovered] = useState(false);
 
-        <span className="text-sm font-medium text-gray-700">
-          {isLoading
-            ? "Connecting..."
-            : isConnected
-            ? shortenAddress(address)
-            : "Connect Wallet"}
-        </span>
-      </button>
+  return (
+    <div className="inline-block">
+      {!isConnected && (
+        <button
+          onClick={onConnect}
+          disabled={isConnecting}
+          className={`px-4 py-2 rounded-lg font-inter text-sm transition-all ${
+            isHovered ? "bg-[#2563eb] text-white" : "bg-[#3b82f6] text-white"
+          }`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {isConnecting ? (
+            <span className="flex items-center">
+              <i className="fas fa-spinner fa-spin mr-2"></i>
+              Connecting...
+            </span>
+          ) : (
+            <span className="flex items-center">
+              <i className="fas fa-wallet mr-2"></i>
+              Connect Wallet
+            </span>
+          )}
+        </button>
+      )}
 
       {isConnected && (
-        <button
-          onClick={onDisconnect}
-          className="absolute mt-2 left-0 w-full px-4 py-2 text-sm text-red-600 bg-white border border-gray-200 rounded-full shadow-sm hover:bg-gray-50 transition-colors"
-        >
-          Disconnect
-        </button>
+        <div className="flex items-center px-4 py-2 rounded-lg bg-[#f8fafc] border border-[#e2e8f0]">
+          <div className="flex items-center">
+            <i className="fas fa-circle text-[#22c55e] text-xs mr-2"></i>
+            <span className="font-inter text-sm text-[#64748b]">
+              {shortenAddress(address)}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="text-[#ef4444] text-sm mt-2 font-inter">{error}</div>
       )}
     </div>
   );
 }
 
 function WalletConnectStory() {
+  const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [error, setError] = useState(null);
+  const [address, setAddress] = useState(null);
+
+  const connectWallet = async () => {
+    if (!window.ethereum) {
+      setError("Please install MetaMask");
+      return;
+    }
+
+    setIsConnecting(true);
+    setError(null);
+
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setAddress(accounts[0]);
+      setIsConnected(true);
+    } catch (err) {
+      setError("Failed to connect wallet");
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 p-8 space-y-8">
+    <div className="p-8 space-y-4">
       <div>
-        <h2 className="text-sm font-medium text-gray-500 mb-4">
-          Not Connected
-        </h2>
+        <h3 className="font-inter text-lg mb-4">Disconnected State</h3>
         <WalletConnect
           isConnected={false}
-          onConnect={() => console.log("Connecting...")}
+          isConnecting={false}
+          onConnect={() => {}}
         />
       </div>
 
       <div>
-        <h2 className="text-sm font-medium text-gray-500 mb-4">Loading</h2>
+        <h3 className="font-inter text-lg mb-4">Connecting State</h3>
         <WalletConnect
           isConnected={false}
-          isLoading={true}
-          onConnect={() => console.log("Connecting...")}
+          isConnecting={true}
+          onConnect={() => {}}
         />
       </div>
 
       <div>
-        <h2 className="text-sm font-medium text-gray-500 mb-4">Connected</h2>
+        <h3 className="font-inter text-lg mb-4">Connected State</h3>
         <WalletConnect
           isConnected={true}
-          address="0x742d35Cc6634C0532925a3b844Bc454e4438f44e"
-          onDisconnect={() => console.log("Disconnecting...")}
+          address="0x1234567890abcdef1234567890abcdef12345678"
+          onConnect={() => {}}
+        />
+      </div>
+
+      <div>
+        <h3 className="font-inter text-lg mb-4">Error State</h3>
+        <WalletConnect
+          isConnected={false}
+          error="Failed to connect wallet"
+          onConnect={() => {}}
+        />
+      </div>
+
+      <div>
+        <h3 className="font-inter text-lg mb-4">Live Demo</h3>
+        <WalletConnect
+          isConnected={isConnected}
+          isConnecting={isConnecting}
+          address={address}
+          error={error}
+          onConnect={connectWallet}
         />
       </div>
     </div>
