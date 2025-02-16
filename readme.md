@@ -72,8 +72,6 @@ To use the project, follow these steps:
 
 ## Frontend
 
-This project was generated from [create.xyz](https://create.xyz/).
-
 It is a [Next.js](https://nextjs.org/) project built on React and TailwindCSS.
 
 ### Getting Started
