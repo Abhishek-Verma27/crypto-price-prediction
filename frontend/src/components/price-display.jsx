@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 function PriceDisplay({ prices, loading, error }) {
   const [chartData, setChartData] = useState({
@@ -109,40 +109,6 @@ function PriceDisplay({ prices, loading, error }) {
           )}
         </div>
       ))}
-    </div>
-  );
-}
-
-function PriceDisplayStory() {
-  const mockPrices = {
-    btc: {
-      current: 45000,
-      changePercentage: 2.5,
-      history: [42000, 43000, 44000, 45000, 45000],
-    },
-    eth: {
-      current: 2800,
-      changePercentage: -1.2,
-      history: [2900, 2850, 2800, 2750, 2800],
-    },
-  };
-
-  return (
-    <div className="p-8 space-y-8 bg-[#f8fafc]">
-      <div>
-        <h3 className="font-inter text-lg mb-4">Loading State</h3>
-        <PriceDisplay loading={true} />
-      </div>
-
-      <div>
-        <h3 className="font-inter text-lg mb-4">Error State</h3>
-        <PriceDisplay error="Failed to fetch prices" />
-      </div>
-
-      <div>
-        <h3 className="font-inter text-lg mb-4">Populated State</h3>
-        <PriceDisplay prices={mockPrices} loading={false} />
-      </div>
     </div>
   );
 }

@@ -1,5 +1,9 @@
 "use client";
-import React from "react";
+import {React, useState, useEffect} from "react";
+import WalletConnect from "../components/Wallet-Connect";
+import PriceDisplay from "../components/Price-Display";
+import PredictionForm from "../components/Prediction-Form";
+import TransactionStatus from "../components/Transaction-Status";
 
 function MainComponent() {
   const [walletState, setWalletState] = useState({
@@ -20,23 +24,39 @@ function MainComponent() {
   const [transactionError, setTransactionError] = useState(null);
 
   useEffect(() => {
-    const mockPrices = {
-      btc: {
-        current: 45000,
-        changePercentage: 2.5,
-        history: [42000, 43000, 44000, 45000, 45000],
-      },
-      eth: {
-        current: 2800,
-        changePercentage: -1.2,
-        history: [2900, 2850, 2800, 2750, 2800],
-      },
+    const fetchPrices = async () => {
+      try {
+        const response = await fetch("https://api.binance.com/api/v3/ticker/24hr");
+        if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
+  
+        const data = await response.json();
+  
+        // Extract relevant data for BTC and ETH
+        const btcData = data.find((item) => item.symbol === "BTCUSDT");
+        const ethData = data.find((item) => item.symbol === "ETHUSDT");
+  
+        setPrices({
+          btc: {
+            current: parseFloat(btcData.lastPrice),
+            changePercentage: parseFloat(btcData.priceChangePercent),
+          },
+          eth: {
+            current: parseFloat(ethData.lastPrice),
+            changePercentage: parseFloat(ethData.priceChangePercent),
+          },
+        });
+  
+        setPriceLoading(false);
+      } catch (error) {
+        setPriceError(error.message);
+        setPriceLoading(false);
+      }
     };
-    setTimeout(() => {
-      setPrices(mockPrices);
-      setPriceLoading(false);
-    }, 1500);
-  }, []);
+  
+    fetchPrices();
+    const interval = setInterval(fetchPrices, 60000);
+    return () => clearInterval(interval);
+  }, []);  
 
   const handleWalletConnect = async () => {
     if (!window.ethereum) {
