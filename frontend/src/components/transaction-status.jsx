@@ -1,5 +1,5 @@
 "use client";
-import {React, useState, useEffect} from "react";
+import {React, useState} from "react";
 
 function TransactionStatus({
   prediction,
@@ -68,7 +68,7 @@ function TransactionStatus({
                 Predicted Price
               </span>
               <div className="font-inter text-lg">
-                ${prediction.price.toLocaleString()}
+                {prediction.price !== undefined ? `$${prediction.price.toLocaleString()}` : 'N/A'}
               </div>
             </div>
           </div>
@@ -106,7 +106,7 @@ function TransactionStatus({
             </div>
 
             <a
-              href={`https://explorer.skale.network/tx/${transactionHash}`}
+              href={`https://giant-half-dual-testnet.explorer.testnet.skalenodes.com/address/0x87DdCCa2876C429bDaeF93497CeBD2898Ca9Da20`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block text-[#3b82f6] hover:text-[#2563eb] font-inter text-sm"
@@ -122,54 +122,6 @@ function TransactionStatus({
             {error}
           </div>
         )}
-      </div>
-    </div>
-  );
-}
-
-function TransactionStatusStory() {
-  const mockPrediction = {
-    coin: "btc",
-    price: 45000,
-  };
-
-  return (
-    <div className="p-8 space-y-8 bg-[#f8fafc]">
-      <div>
-        <h3 className="font-inter text-lg mb-4">Pending Transaction</h3>
-        <TransactionStatus
-          prediction={mockPrediction}
-          transactionStatus="pending"
-          transactionHash="0x1234567890abcdef1234567890abcdef12345678"
-        />
-      </div>
-
-      <div>
-        <h3 className="font-inter text-lg mb-4">Successful Transaction</h3>
-        <TransactionStatus
-          prediction={mockPrediction}
-          transactionStatus="success"
-          transactionHash="0x1234567890abcdef1234567890abcdef12345678"
-        />
-      </div>
-
-      <div>
-        <h3 className="font-inter text-lg mb-4">Failed Transaction</h3>
-        <TransactionStatus
-          prediction={mockPrediction}
-          transactionStatus="failure"
-          transactionHash="0x1234567890abcdef1234567890abcdef12345678"
-          error="Transaction failed due to insufficient funds"
-        />
-      </div>
-
-      <div>
-        <h3 className="font-inter text-lg mb-4">Ethereum Prediction</h3>
-        <TransactionStatus
-          prediction={{ coin: "eth", price: 2800 }}
-          transactionStatus="success"
-          transactionHash="0x1234567890abcdef1234567890abcdef12345678"
-        />
       </div>
     </div>
   );

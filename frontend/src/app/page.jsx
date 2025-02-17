@@ -88,19 +88,39 @@ function MainComponent() {
   const handlePredictionSubmit = async (data) => {
     setPredictionLoading(true);
     setTransactionError(null);
+    const cryptoType = data.coin; // Extract cryptoType from data
+    delete data.coin; // Remove coin key from data before sending
+
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setPrediction({
-        coin: data.coin,
-        price: data.prices[data.prices.length - 1],
+      const response = await fetch(`http://127.0.0.1:5000/predict/${cryptoType}`, { // Dynamic URL based on cryptoType
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([data]), // Make sure data is in a list as per backend requirement
       });
-      setTransactionStatus("success");
-      setTransactionHash("0x" + "1".repeat(64));
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`API error: ${errorText}`);
+      }
+
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      // Set prediction with the coin type included
+      setPrediction({ coin: cryptoType, price: result.prediction });
+      setTransactionStatus('success');
+      setTransactionHash(result.tx_hash);
     } catch (err) {
-      setTransactionError("Transaction failed");
-      setTransactionStatus("failure");
+      setTransactionError(err.message || "Transaction failed");
+      setTransactionStatus('failure');
+    } finally {
+      setPredictionLoading(false);
     }
-    setPredictionLoading(false);
   };
 
   return (

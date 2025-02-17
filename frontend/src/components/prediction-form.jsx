@@ -9,31 +9,38 @@ function PredictionForm({ onSubmit, loading, error }) {
   const validatePrices = () => {
     const errors = prices.map((price) => {
       if (!price) return "Price is required";
-      if (isNaN(price)) return "Must be a number";
-      if (price <= 0) return "Must be greater than 0";
+      const numPrice = parseFloat(price);
+      if (isNaN(numPrice)) return "Must be a number";
+      if (numPrice <= 0) return "Must be greater than 0";
       return "";
     });
     setValidationErrors(errors);
     return errors.every((error) => !error);
   };
+  
+  // Update the handleAutoFill function with more realistic values:
+  const handleAutoFill = () => {
+    const mockData = {
+      btc: [27300.67, 27500.34, 27455.23, 27350.56, 27408.34],
+      eth: [1850.45, 1865.23, 1858.67, 1870.12, 1862.89],
+    };
+    setPrices(mockData[selectedCoin].map(String));
+    setValidationErrors([]);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (validatePrices()) {
-      onSubmit({
+      const predictionData = {
         coin: selectedCoin,
-        prices: prices.map(Number),
-      });
+        lag_1: parseFloat(prices[0]),
+        lag_2: parseFloat(prices[1]),
+        lag_3: parseFloat(prices[2]),
+        lag_4: parseFloat(prices[3]),
+        lag_5: parseFloat(prices[4])
+      };
+      onSubmit(predictionData);
     }
-  };
-
-  const handleAutoFill = () => {
-    const mockData = {
-      btc: [44000, 45000, 43000, 46000, 45500],
-      eth: [2800, 2850, 2750, 2900, 2850],
-    };
-    setPrices(mockData[selectedCoin].map(String));
-    setValidationErrors([]);
   };
 
   const updatePrice = (index, value) => {
