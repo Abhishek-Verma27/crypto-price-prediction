@@ -158,7 +158,7 @@ function MainComponent() {
               Make Your Prediction
             </h2>
             <p className="font-inter text-[#64748b] mb-6">
-              Enter the predicted prices for the next 5 days to generate a
+              Enter the predicted prices for the 5 days to generate a
               forecast. Connect your wallet to save your predictions.
             </p>
             <PredictionForm
