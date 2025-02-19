@@ -35,9 +35,8 @@ def fetch_data_in_chunks(symbol, period_id, api_key, start_date, end_date, chunk
             append_data_to_csv(df, f"{symbol}_historical_data.csv")
         current_start_date = (datetime.datetime.strptime(current_end_date, "%Y-%m-%d") + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
 
-# Replace 'YOUR_API_KEY' with your actual API key
-api_key = '1b6bbacc-f951-4645-b3bb-a49274845546'
-
+# API key
+api_key = os.getenv('COINAPI_KEY')
 # Fetch historical data for Bitcoin (BTC/USD)
 fetch_data_in_chunks("BITSTAMP_SPOT_BTC_USD", "1DAY", api_key, "2023-01-01", "2025-01-18")
 
