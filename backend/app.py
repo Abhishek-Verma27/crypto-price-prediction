@@ -1,3 +1,4 @@
+import os
 from web3 import Web3
 import pandas as pd
 import joblib
@@ -55,8 +56,7 @@ contract_abi = [
 contract = web3.eth.contract(address=contract_address, abi=contract_abi)
 
 # Private key of the sender account
-private_key = "0x065f0eb0a4b2408bbeac1c66173dac7f92973d3b7508d28f273be32041367a23"
-
+private_key = os.getenv('PRIVATE_KEY')
 # Derive account from the private key
 account = web3.eth.account.from_key(private_key)
 
