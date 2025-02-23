@@ -1,9 +1,9 @@
 "use client";
 import {React, useState, useEffect} from "react";
-import WalletConnect from "../components/Wallet-Connect";
-import PriceDisplay from "../components/Price-Display";
-import PredictionForm from "../components/Prediction-Form";
-import TransactionStatus from "../components/Transaction-Status";
+import WalletConnect from "../components/wallet-connect";
+import PriceDisplay from "../components/price-display";
+import PredictionForm from "../components/prediction-form";
+import TransactionStatus from "../components/transaction-status";
 
 function MainComponent() {
   const [walletState, setWalletState] = useState({
