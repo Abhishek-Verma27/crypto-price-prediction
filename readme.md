@@ -19,10 +19,10 @@ The Crypto Price Prediction project leverages the power of machine learning and 
 
 ## Technologies Used
 
-- **JavaScript**: 61.5%
-- **Python**: 33.2%
-- **Solidity**: 5.1%
-- **CSS**: 0.2%
+- **JavaScript**
+- **Python**
+- **Solidity**
+- **CSS**
 
 ## Installation
 
