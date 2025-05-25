@@ -126,5 +126,20 @@ def make_lstm_prediction(model, scaler, crypto_type):
         print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
 
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "message": "🚀 Crypto Price Prediction API is live!",
+        "available_endpoints": {
+            "POST /predict/btc": "Send { sequence: [60 floats] }",
+            "POST /predict/eth": "Send { sequence: [60 floats] }"
+        }
+    }), 200
+
+@app.route("/favicon.ico")
+def favicon():
+    return "", 204
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 5000))  # 5000 is fallback for local dev
+    app.run(host="0.0.0.0", port=port, debug=False)
