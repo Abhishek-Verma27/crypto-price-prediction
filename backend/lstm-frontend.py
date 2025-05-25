@@ -58,7 +58,7 @@ else:
     
 # Step 1: Select crypto
 crypto = st.selectbox("Select Cryptocurrency", ("bitcoin", "ethereum"))
-backend_url = "http://127.0.0.1:5000/predict/btc" if crypto == "bitcoin" else "http://127.0.0.1:5000/predict/eth"
+backend_url = "https://crypto-price-prediction-j1i0.onrender.com/predict/btc" if crypto == "bitcoin" else "https://crypto-price-prediction-j1i0.onrender.com/predict/eth"
 
 # Step 2: Choose data input method
 input_mode = st.radio("Choose input method:", ("📂 Upload CSV", "📝 Enter Manually", "🌐 Fetch Online"))
