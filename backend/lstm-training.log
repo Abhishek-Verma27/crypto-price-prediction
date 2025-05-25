@@ -1,30 +1,30 @@
-2025-05-25 11:32:21,935 - INFO - Starting training for BTC
-2025-05-25 11:32:21,944 - INFO - Loaded 875 rows from data/BTC_historical_data.csv
-2025-05-25 11:32:21,960 - INFO - Data scaled with MinMaxScaler
-2025-05-25 11:32:21,968 - INFO - Created 845 sequences of length 30
-2025-05-25 11:32:21,969 - INFO - Split data: 676 train, 169 test
-2025-05-25 11:32:22,180 - INFO - Model compiled
-2025-05-25 11:32:22,180 - INFO - Starting model.fit with batch_size=16, epochs=30
-2025-05-25 11:32:25,748 - INFO - Training completed for BTC
-2025-05-25 11:32:26,185 - INFO - BTC evaluation metrics:
-2025-05-25 11:32:26,186 - INFO -   MSE:  138286340.0179
-2025-05-25 11:32:26,186 - INFO -   RMSE: 11759.5212
-2025-05-25 11:32:26,186 - INFO -   R²:   -1.1404
-2025-05-25 11:32:26,187 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
-2025-05-25 11:32:26,218 - INFO - Saved model to models/BTC_lstm_model.h5
-2025-05-25 11:32:26,218 - INFO - Saved scaler to models/BTC_lstm_scaler.pkl
-2025-05-25 11:32:26,218 - INFO - Starting training for ETH
-2025-05-25 11:32:26,224 - INFO - Loaded 875 rows from data/ETH_historical_data.csv
-2025-05-25 11:32:26,230 - INFO - Data scaled with MinMaxScaler
-2025-05-25 11:32:26,233 - INFO - Created 845 sequences of length 30
-2025-05-25 11:32:26,233 - INFO - Split data: 676 train, 169 test
-2025-05-25 11:32:26,266 - INFO - Model compiled
-2025-05-25 11:32:26,267 - INFO - Starting model.fit with batch_size=16, epochs=30
-2025-05-25 11:32:29,427 - INFO - Training completed for ETH
-2025-05-25 11:32:29,861 - INFO - ETH evaluation metrics:
-2025-05-25 11:32:29,862 - INFO -   MSE:  64081.7593
-2025-05-25 11:32:29,862 - INFO -   RMSE: 253.1438
-2025-05-25 11:32:29,863 - INFO -   R²:   0.8721
-2025-05-25 11:32:29,863 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
-2025-05-25 11:32:29,885 - INFO - Saved model to models/ETH_lstm_model.h5
-2025-05-25 11:32:29,885 - INFO - Saved scaler to models/ETH_lstm_scaler.pkl
+2025-05-25 11:40:04,405 - INFO - Starting training for BTC
+2025-05-25 11:40:04,414 - INFO - Loaded 875 rows from data/BTC_historical_data.csv
+2025-05-25 11:40:04,421 - INFO - Data scaled with MinMaxScaler
+2025-05-25 11:40:04,426 - INFO - Created 845 sequences of length 30
+2025-05-25 11:40:04,427 - INFO - Split data: 676 train, 169 test
+2025-05-25 11:40:04,568 - INFO - Model compiled
+2025-05-25 11:40:04,569 - INFO - Starting model.fit with batch_size=16, epochs=30
+2025-05-25 11:40:08,058 - INFO - Training completed for BTC
+2025-05-25 11:40:08,474 - INFO - BTC evaluation metrics:
+2025-05-25 11:40:08,475 - INFO -   MSE:  15330159.6372
+2025-05-25 11:40:08,475 - INFO -   RMSE: 3915.3748
+2025-05-25 11:40:08,476 - INFO -   R²:   0.7627
+2025-05-25 11:40:08,478 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-05-25 11:40:08,519 - INFO - Saved model to models/BTC_lstm_model.h5
+2025-05-25 11:40:08,520 - INFO - Saved scaler to models/BTC_lstm_scaler.pkl
+2025-05-25 11:40:08,520 - INFO - Starting training for ETH
+2025-05-25 11:40:08,526 - INFO - Loaded 875 rows from data/ETH_historical_data.csv
+2025-05-25 11:40:08,530 - INFO - Data scaled with MinMaxScaler
+2025-05-25 11:40:08,533 - INFO - Created 845 sequences of length 30
+2025-05-25 11:40:08,533 - INFO - Split data: 676 train, 169 test
+2025-05-25 11:40:08,568 - INFO - Model compiled
+2025-05-25 11:40:08,569 - INFO - Starting model.fit with batch_size=16, epochs=30
+2025-05-25 11:40:13,607 - INFO - Training completed for ETH
+2025-05-25 11:40:14,004 - INFO - ETH evaluation metrics:
+2025-05-25 11:40:14,005 - INFO -   MSE:  32504.5987
+2025-05-25 11:40:14,005 - INFO -   RMSE: 180.2903
+2025-05-25 11:40:14,005 - INFO -   R²:   0.9351
+2025-05-25 11:40:14,006 - WARNING - You are saving your model as an HDF5 file via `model.save()` or `keras.saving.save_model(model)`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')` or `keras.saving.save_model(model, 'my_model.keras')`. 
+2025-05-25 11:40:14,041 - INFO - Saved model to models/ETH_lstm_model.h5
+2025-05-25 11:40:14,041 - INFO - Saved scaler to models/ETH_lstm_scaler.pkl

@@ -57,7 +57,7 @@ def train_lstm_model(csv_path, crypto_type, sequence_length=30):
 
     # Build smaller LSTM model to fit system capacity
     model = Sequential([
-        LSTM(32, activation='relu', input_shape=(sequence_length, 1)),  # 32 units to save memory
+        LSTM(32, input_shape=(sequence_length, 1)),  # 32 units to save memory
         Dense(1)
     ])
     model.compile(optimizer='adam', loss='mse')
