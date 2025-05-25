@@ -168,3 +168,11 @@ npx hardhat run scripts/deploy.js --network skale
 predict-lstm.py: 
 python predict-lstm.py --coin ETH --days 30
 python predict-lstm.py --coin BTC --days 30
+
+EXAMPLE API REQUEST FOR LSTM-SERVER: 
+POST /predict/btc
+Content-Type: application/json
+
+{
+  "sequence": [0.234, 0.238, ..., 0.456]  // 60 normalized float values
+}
