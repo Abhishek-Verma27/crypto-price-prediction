@@ -10,3 +10,4 @@ xgboost
 matplotlib
 web3
 tqdm
+gunicorn
