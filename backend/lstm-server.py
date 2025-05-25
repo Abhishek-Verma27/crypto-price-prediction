@@ -64,6 +64,16 @@ eth_model = load_model("models/ETH_lstm_model.h5", custom_objects={'mse': mean_s
 btc_scaler = joblib.load("models/BTC_lstm_scaler.pkl")
 eth_scaler = joblib.load("models/ETH_lstm_scaler.pkl")
 
+@app.route("/", methods=["GET"])
+def home():
+    return jsonify({
+        "message": "🚀 Crypto Price Prediction API is live!",
+        "available_endpoints": {
+            "POST /predict/btc": "Send { sequence: [60 floats] }",
+            "POST /predict/eth": "Send { sequence: [60 floats] }"
+        }
+    })
+
 @app.route("/predict/btc", methods=["POST"])
 def predict_btc():
     return make_lstm_prediction(btc_model, btc_scaler, "BTC")
@@ -125,16 +135,6 @@ def make_lstm_prediction(model, scaler, crypto_type):
     except Exception as e:
         print("Error:", str(e))
         return jsonify({"error": str(e)}), 500
-
-@app.route("/", methods=["GET"])
-def home():
-    return jsonify({
-        "message": "🚀 Crypto Price Prediction API is live!",
-        "available_endpoints": {
-            "POST /predict/btc": "Send { sequence: [60 floats] }",
-            "POST /predict/eth": "Send { sequence: [60 floats] }"
-        }
-    }), 200
 
 @app.route("/favicon.ico")
 def favicon():
