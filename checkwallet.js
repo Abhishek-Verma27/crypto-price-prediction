@@ -1,8 +1,7 @@
 const { ethers } = require("hardhat");
 
 async function main() {
-  const privateKey = "key"; // Replace with your private key
-  const wallet = new ethers.Wallet(privateKey);
+const privateKey = process.env.PRIVATE_KEY;  const wallet = new ethers.Wallet(privateKey);
   console.log("Wallet address:", wallet.address);
 }
 
