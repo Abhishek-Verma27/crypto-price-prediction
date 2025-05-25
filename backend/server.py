@@ -61,8 +61,8 @@ private_key = "0x065f0eb0a4b2408bbeac1c66173dac7f92973d3b7508d28f273be32041367a2
 account = web3.eth.account.from_key(private_key)
 
 # Load models
-btc_model_path = r"C:\Users\abhis\OneDrive\Desktop\crypto-price-prediction\backend\models\BTC_price_predictor.pkl"
-eth_model_path = r"C:\Users\abhis\OneDrive\Desktop\crypto-price-prediction\backend\models\ETH_price_predictor.pkl"
+btc_model_path = "models/BTC_price_predictor.pkl"
+eth_model_path = "models/ETH_price_predictor.pkl"
 
 with open(btc_model_path, "rb") as f:
     btc_model = joblib.load(f)

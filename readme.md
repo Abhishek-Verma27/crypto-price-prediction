@@ -163,3 +163,8 @@ $response.Content
 blockchain commands : 
 npx hardhat compile
 npx hardhat run scripts/deploy.js --network skale
+
+
+predict-lstm.py: 
+python predict-lstm.py --coin ETH --days 30
+python predict-lstm.py --coin BTC --days 30

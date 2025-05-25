@@ -6,3 +6,7 @@ keras
 flask
 flask-cors
 requests
+xgboost
+matplotlib
+web3
+tqdm
