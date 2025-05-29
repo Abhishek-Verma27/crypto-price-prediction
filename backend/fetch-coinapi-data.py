@@ -3,7 +3,7 @@ import pandas as pd
 import datetime
 import os
 
-API_KEY = '1b6bbacc-f951-4645-b3bb-a49274845546'
+API_KEY = os.getenv('API_KEY')
 CHUNK_SIZE_DAYS = 30
 
 def fetch_historical_data(symbol, period_id, api_key, start_date, end_date):
