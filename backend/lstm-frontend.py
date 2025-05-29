@@ -66,8 +66,16 @@ input_mode = st.radio("Choose input method:", ("📂 Upload CSV", "📝 Enter Ma
 def predict(sequence):
     try:
         st.info("Sending data to backend...")
-        res = requests.post(backend_url, json={"sequence": sequence})
-        data = res.json()
+        res = requests.post(backend_url, json={"sequence": sequence}, timeout=15)
+
+        # Check if the response is actually JSON
+        content_type = res.headers.get("Content-Type", "")
+        if "application/json" in content_type:
+            data = res.json()
+        else:
+            st.error("❌ Backend did not return JSON.")
+            st.code(res.text)  # Show raw response for debugging
+            return
 
         if res.status_code == 200:
             st.success(f"Predicted {crypto.upper()} Price: ${data['prediction']:.2f}")
@@ -78,37 +86,69 @@ def predict(sequence):
                     st.markdown(f"[Click here to view transaction]({explorer_link})")
             st.code(f"Transaction Hash: {transaction_hash}")
         else:
-            st.error(f"Backend error: {data.get('error', res.text)}")
-    except Exception as e:
-        st.error(f"Connection error: {e}")
+            st.error(f"❌ Backend error: {data.get('error', 'Unknown error')}")
+            st.code(data)
+    except requests.exceptions.RequestException as e:
+        st.error(f"🔌 Network error: {e}")
+    except ValueError:
+        st.error("❌ Failed to parse response as JSON.")
+        st.code(res.text)
 
-# === 1. Upload CSV with selectable column ===
+# === 1. Upload CSV or Excel with smart column selection ===
 if input_mode == "📂 Upload CSV":
-    uploaded_file = st.file_uploader("Upload CSV", type=["csv"])
+    uploaded_file = st.file_uploader("Upload CSV or Excel", type=["csv", "xlsx"])
     if uploaded_file:
         try:
-            df = pd.read_csv(uploaded_file)
-            st.subheader("CSV Preview:")
+            if uploaded_file.name.endswith(".csv"):
+                # Try to auto-detect delimiter
+                sample = uploaded_file.read(2048).decode("utf-8")
+                uploaded_file.seek(0)
+                delimiter = "," if sample.count(",") > sample.count(";") else ";"
+                if sample.count("\t") > max(sample.count(","), sample.count(";")):
+                    delimiter = "\t"
+                df = pd.read_csv(uploaded_file, delimiter=delimiter)
+            else:
+                df = pd.read_excel(uploaded_file)
+
+            st.subheader("📊 Data Preview:")
             st.dataframe(df.head())
 
-            st.subheader("Select column with closing prices:")
-            selected_column = st.selectbox("Available columns:", df.columns)
+            # Auto-detect closing price column
+            likely_close_cols = [col for col in df.columns if "close" in col.lower()]
+            numeric_cols = df.select_dtypes(include='number').columns.tolist()
 
-            if len(df[selected_column]) < 60:
-                st.error("Need at least 60 rows in the selected column.")
+            if not numeric_cols:
+                st.error("No numeric columns found in the uploaded file.")
             else:
-                prices = df[selected_column].tail(60).tolist()
-                st.success(f"Using column: {selected_column}")
-                st.line_chart(prices)
+                default_col = (
+                    likely_close_cols[0] if likely_close_cols and likely_close_cols[0] in numeric_cols
+                    else numeric_cols[0]
+                )
+                if likely_close_cols:
+                    st.success(f"Auto-detected closing price column: `{default_col}`")
 
-                if st.button("🚀 Predict"):
-                    predict(prices)
+                st.subheader("📈 Select column with closing prices:")
+                selected_column = st.selectbox(
+                    "Available numeric columns:", numeric_cols,
+                    index=numeric_cols.index(default_col)
+                )
+
+                if len(df[selected_column]) < 60:
+                    st.error("Need at least 60 rows in the selected column.")
+                else:
+                    prices = df[selected_column].tail(60).tolist()
+                    st.success(f"Using column: `{selected_column}`")
+                    st.line_chart(prices)
+
+                    if st.button("🚀 Predict"):
+                        predict(prices)
+
         except Exception as ex:
-            st.error(f"Error reading CSV: {ex}")
+            st.error(f"Error processing file: {ex}")
 
 # === 2. Enter Manually ===
 elif input_mode == "📝 Enter Manually":
-    st.write("Enter 60 prices separated by commas:")
+    st.write("Enter last 60 prices separated by commas:")
     manual_input = st.text_area("Prices", height=150, placeholder="e.g., 10000, 10100, 10200, ...")
     if manual_input:
         try:
@@ -135,7 +175,7 @@ elif input_mode == "🌐 Fetch Online":
         if "prices" in data:
             all_prices = [price[1] for price in data["prices"]]
             prices = all_prices[-60:]  # ✅ Ensure exactly 60 entries
-            st.success(f"Fetched {len(prices)} prices.")
+            st.success(f"Fetched recent {len(prices)} prices.")
             st.line_chart(prices)
             if st.button("🚀 Predict"):
                 predict(prices)
