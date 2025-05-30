@@ -7,7 +7,9 @@ This project combines machine learning with blockchain to predict cryptocurrency
 ## Table of Contents
 
 - [Project Description](#project-description)
-- [Technologies Used](#technologies-used)
+- [Features](#features)
+- [Technology stack](#technologies-used)
+- [Architecture Overview](#architecture-overview)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Frontend](#frontend)
