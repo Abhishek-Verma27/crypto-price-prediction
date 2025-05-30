@@ -1,6 +1,8 @@
 # Crypto Price Prediction
 
 This project combines machine learning with blockchain to predict cryptocurrency prices based on historical data. Blockchain ensures the transparency and immutability of prediction data while AI models provide price predictions.
+![image](https://github.com/user-attachments/assets/f793b430-b40c-4754-a774-298fa93244d4)
+
 
 ## Table of Contents
 
@@ -15,14 +17,39 @@ This project combines machine learning with blockchain to predict cryptocurrency
 
 ## Project Description
 
-The Crypto Price Prediction project leverages the power of machine learning and blockchain technology to provide accurate predictions of cryptocurrency prices. The project aims to use historical data to train AI models, ensuring data integrity and transparency through blockchain technology.
+Crypto Price Prediction leverages machine learning to forecast prices for popular cryptocurrencies such as Bitcoin (BTC) and Ethereum (ETH). The solution involves:
 
-## Technologies Used
+- **Data Collection:** Historical crypto price data is fetched and preprocessed.
+- **AI Model Training:** LSTM and other models are trained to predict future prices.
+- **Prediction Storage:** Results are immutably stored on a blockchain via smart contracts, ensuring auditability.
+- **User Interface:** A modern web app allows users to interact with the prediction engine and submit their own predictions, which are also stored on-chain.
 
-- **JavaScript**
-- **Python**
-- **Solidity**
-- **CSS**
+## Features
+
+- Predicts BTC and ETH prices using LSTM neural networks.
+- Stores every prediction on a blockchain for full transparency.
+- Responsive frontend built with Streamlit.
+- Live price fetching from CoinGecko.
+- RESTful API for model inference and blockchain operations.
+
+## Technology Stack
+
+- **Python** (ML backend, Flask API)
+- **Solidity** (Smart contracts)
+- **Streamlit** (Frontend UI)
+- **Hardhat** (Smart contract development)
+- **CoinGecko API** (Live and historical price data for model training)
+
+  ## Architecture Overview
+
+```
+[User] <-> [Streamlit Frontend] <-> [Flask ML API] <-> [Blockchain (Skale)]
+                               |
+                        [CoinGecko APIs]
+```
+- **Frontend:** Streamlit app captures user price inputs and csv uploads, plots the input data on the line graph and displays model prediction outputs and live prices data.
+- **Backend:** Flask API serves ML predictions and interacts with the smart contract.
+- **Blockchain:** All predictions are stored using Solidity contracts on the Skale network.
 
 ## Installation
 
