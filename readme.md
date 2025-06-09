@@ -2,9 +2,11 @@
 
 This project combines machine learning with blockchain to predict cryptocurrency prices based on historical data. Blockchain ensures the transparency and immutability of prediction data while AI models provide price predictions.
 
-![image](https://github.com/user-attachments/assets/f793b430-b40c-4754-a774-298fa93244d4)
+![image](https://github.com/user-attachments/assets/219081a6-6909-43ae-b821-2be998a64f39)
 
-![image](https://github.com/user-attachments/assets/f849bdc4-f169-4e5e-ae35-ff314f15617a)
+![image](https://github.com/user-attachments/assets/676edfeb-e351-4bf6-9b4f-21b2bcfbbc35)
+
+![image](https://github.com/user-attachments/assets/a501a2a4-ed6a-4fed-8be2-f5ba3d7ab555)
 
 
 
