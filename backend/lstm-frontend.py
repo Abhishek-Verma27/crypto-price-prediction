@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import requests
 
-st.title("🧠 Crypto Price Prediction (LSTM)")
+st.title("Crypto Price Prediction (LSTM)")
 
 def get_live_prices():
     url = "https://api.coingecko.com/api/v3/simple/price"
@@ -58,7 +58,9 @@ else:
     
 # Step 1: Select crypto
 crypto = st.selectbox("Select Cryptocurrency", ("bitcoin", "ethereum"))
-backend_url = "https://crypto-price-prediction-j1i0.onrender.com/predict/btc" if crypto == "bitcoin" else "https://crypto-price-prediction-j1i0.onrender.com/predict/eth"
+backend_url = "http://localhost:5000/predict/btc" if crypto == "bitcoin" else "http://localhost:5000/predict/eth"
+
+#prod URL: backend_url = "https://crypto-price-prediction-j1i0.onrender.com/predict/btc" if crypto == "bitcoin" else "https://crypto-price-prediction-j1i0.onrender.com/predict/eth"
 
 # Step 2: Choose data input method
 input_mode = st.radio("Choose input method:", ("📂 Upload CSV", "📝 Enter Manually", "🌐 Fetch Online"))
