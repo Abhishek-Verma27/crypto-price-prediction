@@ -69,7 +69,7 @@ eth_scaler = joblib.load("models/ETH_lstm_scaler.pkl")
 @app.route("/", methods=["GET"])
 def home():
     return jsonify({
-        "message": "🚀 Crypto Price Prediction API is live!",
+        "message": "Crypto Price Prediction API is live!",
         "available_endpoints": {
             "POST /predict/btc": "Send { sequence: [60 floats] }",
             "POST /predict/eth": "Send { sequence: [60 floats] }"
